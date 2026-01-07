@@ -5,7 +5,7 @@ using System.Text;
 
 namespace StudyTodoLog
 {
-    class TaskModel
+    public partial class TaskModel
     {
         public int Id { get; set; }
         public string Title { get; set; } = ""; // コントロール操作時に落ちやすいためnullを避けて設計します
@@ -37,5 +37,32 @@ namespace StudyTodoLog
             }
             return tasks;
         }
+
+        public static int Insert(string connectionString, string title, string? memo)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentNullException
+                    ("タスクタイトルは必須です！\n今日やりたい学習を書きましょう！", nameof(title));
+            using var connection = new SqliteConnection(connectionString);
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+                                INSERT INTO Tasks (Title, Memo, IsCompleted)
+                                VALUES ($title, $memo, 0);
+                                SELECT last_insert_rowid();
+                                ";
+
+            command.Parameters.AddWithValue("$title", title);
+            command.Parameters.AddWithValue("$memo", (object?)memo ?? DBNull.Value);
+
+            long newId = (long)command.ExecuteScalar();
+            return (int)newId;
+        }
+
+        
+            
+                                     
+
     }
 }

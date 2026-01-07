@@ -6,7 +6,28 @@
         xmlns:local="clr-namespace:StudyTodoLog"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="12">
+        <ListView x:Name="TaskListView">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="完了" Width="60">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <!--まずはデータを画面に正しく表示させる。次にチェックボックスの付け替えを可能にする。最後にチェック操作によって保存処理などを動かせるようにする。-->
+                                <CheckBox IsChecked="{Binding IsCompleted}" IsEnabled="False" HorizontalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="タイトル" Width="220"
+                                    DisplayMemberBinding="{Binding Title}"/>
+
+                    <GridViewColumn Header="メモ" Width="420"
+                                    DisplayMemberBinding="{Binding Memo}"/>
+                </GridView>
+                
+            </ListView.View>
+        </ListView>
         
     </Grid>
 </Window>
