@@ -18,33 +18,6 @@ namespace StudyTodoLog
     public partial class MainWindow : Window
     {
         private readonly DatabaseManager _db = new DatabaseManager();
-        
-
-        private void LoadTasks()
-        {
-            string cs = new SqliteConnectionStringBuilder
-            {
-                DataSource = _db.GetDatabasePath()
-            }.ToString();
-
-            var tasks = TaskModel.GetAllTasks(cs);
-            MessageBox.Show($"タスク件数{tasks.Count}");
-        }
-
-        private void TestInsert()
-        {
-            var db = new DatabaseManager();
-            string cs = new SqliteConnectionStringBuilder
-            {
-                DataSource = db.GetDatabasePath()
-            }.ToString();
-
-            int newId = TaskModel.Insert(cs, "テストタスク", "DBに追加できるか確認します！");
-            var tasks = TaskModel.GetAllTasks(cs);
-
-            MessageBox.Show($"追加したId:{newId}\n現在の件数:{tasks.Count}"); 
-        }
-
 
         public MainWindow()
         {
@@ -52,9 +25,50 @@ namespace StudyTodoLog
 
             _db.InitializeDatabase();
             LoadTasks();
-            TestInsert();
 
         }
 
+        private void LoadTasks()
+        {
+            try
+            {
+                string cs = new SqliteConnectionStringBuilder
+                {
+                    DataSource = _db.GetDatabasePath()
+                }.ToString();
+
+                var tasks = TaskModel.GetAllTasks(cs);
+
+                TaskListView.ItemsSource = tasks;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "タスクの読み込みに失敗しました\n\n" + ex.Message,
+                    "Load Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+
+        }
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            string cs = new SqliteConnectionStringBuilder
+            {
+                DataSource = _db.GetDatabasePath()
+            }.ToString();
+
+            var window = new AddTaskWindow(cs)
+            {
+                Owner = this
+            };
+
+            bool? result = window.ShowDialog();
+            if (result == true)
+            {
+                LoadTasks();
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:StudyTodoLog"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    
     <Grid Margin="12">
         <ListView x:Name="TaskListView">
             <ListView.View>
