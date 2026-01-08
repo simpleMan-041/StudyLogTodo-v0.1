@@ -18,12 +18,19 @@ namespace StudyTodoLog
     public partial class MainWindow : Window
     {
         private readonly DatabaseManager _db = new DatabaseManager();
+        private readonly string _connectionString;
 
         public MainWindow()
         {
             InitializeComponent();
 
             _db.InitializeDatabase();
+
+            _connectionString = new SqliteConnectionStringBuilder
+            {
+                DataSource = _db.GetDatabasePath()
+            }.ToString();
+
             LoadTasks();
 
         }
@@ -32,13 +39,7 @@ namespace StudyTodoLog
         {
             try
             {
-                string cs = new SqliteConnectionStringBuilder
-                {
-                    DataSource = _db.GetDatabasePath()
-                }.ToString();
-
-                var tasks = TaskModel.GetAllTasks(cs);
-
+                var tasks = TaskModel.GetAllTasks(_connectionString);
                 TaskListView.ItemsSource = tasks;
             }
             catch (Exception ex)
@@ -54,12 +55,7 @@ namespace StudyTodoLog
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            string cs = new SqliteConnectionStringBuilder
-            {
-                DataSource = _db.GetDatabasePath()
-            }.ToString();
-
-            var window = new AddTaskWindow(cs)
+            var window = new AddTaskWindow(_connectionString)
             {
                 Owner = this
             };
@@ -67,6 +63,32 @@ namespace StudyTodoLog
             bool? result = window.ShowDialog();
             if (result == true)
             {
+                LoadTasks();
+            }
+        }
+
+        private void CompletedCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // 操作に対応するチェックボックスのオブジェクトを特定し、状態の更新を行う。
+                if (sender is not System.Windows.Controls.CheckBox cb) return;
+                if (cb.DataContext is not TaskModel task) return;
+
+                bool isCompleted = cb.IsChecked == true;
+
+                TaskModel.UpdateIsCompleted(_connectionString, task.Id, isCompleted);
+
+                LoadTasks();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "完了状態の更新に失敗しました\n\n" + ex.Message,
+                    "Update Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
                 LoadTasks();
             }
         }

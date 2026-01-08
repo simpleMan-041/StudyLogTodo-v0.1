@@ -43,6 +43,7 @@ namespace StudyTodoLog
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentNullException
                     ("タスクタイトルは必須です！\n今日やりたい学習を書きましょう！", nameof(title));
+            
             using var connection = new SqliteConnection(connectionString);
             connection.Open();
 
@@ -60,9 +61,21 @@ namespace StudyTodoLog
             return (int)newId;
         }
 
-        
-            
-                                     
+        public static void UpdateIsCompleted(string connectionString, int id, bool isCompleted)
+        {
+            using var connection = new SqliteConnection(connectionString);
+            connection.Open();
 
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+                            UPDATE Tasks
+                            SET IsCompleted = $isCompleted
+                            WHERE Id = $Id;
+                            ";
+            command.Parameters.AddWithValue("$Id", id);
+            command.Parameters.AddWithValue("$isCompleted", isCompleted ? 1 : 0);
+
+            command.ExecuteNonQuery();
+        }
     }
 }
