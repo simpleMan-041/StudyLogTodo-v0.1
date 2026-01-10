@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -21,21 +22,18 @@
         
         <TextBox x:Name="TitleTextBox" 
                  Grid.Row="1" 
-                 Style="{StaticResource InputTitleTextBoxStyle}"
-                 Padding="8,4"/>
+                 Style="{StaticResource InputTitleTextBoxStyle}"/>
 
         <TextBlock Grid.Row="2" 
                    Text="メモ(任意)"
-                   Style="{StaticResource FormLabelTextStyle}"
-                   VerticalAlignment="Top"/>
+                   Style="{StaticResource FormLabelTextStyle}"/>
         
         <TextBox x:Name="MemoTextBox" 
-                 Grid.Row="2"
-                 Style="{StaticResource InputMemoTextBoxStyle}"
-                 AcceptsReturn="True" 
-                 TextWrapping="Wrap"/>
+                 Grid.Row="3"
+                 Style="{StaticResource InputMemoTextBoxStyle}"/>
         
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <!--保存ボタンとの間隔を置くためのMargin-->
             <Button Content="キャンセル"
                     Style="{StaticResource FormActionButtonStyle}"
                     Margin="0,0,12,0" 

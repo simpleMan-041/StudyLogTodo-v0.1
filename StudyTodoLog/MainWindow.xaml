@@ -10,7 +10,7 @@
     <Window.Resources>
         <SolidColorBrush x:Key="AccentPurple" Color="#7C3AED"/>
         <SolidColorBrush x:Key="AccentPurpleLight" Color="#A78BFA"/>
-        
+
         <!--追加、削除ボタンに適用されるデザイン-->
         <Style x:Key="CirclePurpleButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource AccentPurple}"/>
@@ -61,6 +61,20 @@
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem" BasedOn="{StaticResource BigRowItemStyle}">
                         <EventSetter Event="MouseDoubleClick" Handler="TaskItem_MouseDoubleClick"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <Border BorderBrush="{StaticResource AccentPurple}"
+                                            BorderThickness="0,0,0,1"
+                                            Background="{TemplateBinding Background}">
+                                        <GridViewRowPresenter Columns="{Binding RelativeSource={RelativeSource AncestorType=ListView}, Path=View.Columns}"
+                                                              Content="{TemplateBinding Content}"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </Style>
                 </ListView.ItemContainerStyle>
 
@@ -70,10 +84,14 @@
                         <GridViewColumn x:Name="ColCompleted" Header="完了" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border BorderBrush="{StaticResource AccentPurpleLight}" BorderThickness="0,0,0,1" Padding="6,10">
+                                    <Border>
                                         <CheckBox IsChecked="{Binding IsCompleted}" 
-                                          HorizontalAlignment="Center"
-                                          Click="CompletedCheckBox_Click"/>
+                                                  Click="CompletedCheckBox_Click"
+                                                  Margin="20,0,0,0">
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="2.8" ScaleY="2.8"/>
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
                                     </Border>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -82,11 +100,14 @@
                         <GridViewColumn x:Name="ColTitle" Header="タイトル" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border BorderBrush="{StaticResource AccentPurpleLight}" BorderThickness="0,0,0,1" Padding="6,10">
+                                    <Border>
                                         <TextBlock Text="{Binding Title}"
-                                               FontSize="22"
-                                               FontWeight="SemiBold"
-                                               TextTrimming="CharacterEllipsis"/>
+                                                    Width="{Binding ActualWidth, ElementName=ColTitle}"
+                                                    FontSize="22"
+                                                    FontWeight="SemiBold"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    HorizontalAlignment="Stretch"
+                                                    TextAlignment="Center"/>
                                     </Border>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -95,7 +116,7 @@
                         <GridViewColumn x:Name="ColMemo" Header="メモ" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border BorderBrush="{StaticResource AccentPurpleLight}" BorderThickness="0,0,0,1" Padding="6,10">
+                                    <Border>
                                         <TextBlock Text="{Binding Memo}"
                                                FontSize="18"
                                                Opacity="0.85"
