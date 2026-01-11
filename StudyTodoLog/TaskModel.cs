@@ -95,6 +95,16 @@ namespace StudyTodoLog
             return command.ExecuteNonQuery();
         }
 
+        public static void DeleteAllTasks(string connectionString)
+        {
+            using var connection = new SqliteConnection(connectionString);
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM Tasks;";
+            command.ExecuteNonQuery();
+        }
+
         public static void Update(string connectionString, int id, string title, string? memo)
         {
             //タスク名の存在を確認後、タイトルとメモ欄の変更をDBに適用する

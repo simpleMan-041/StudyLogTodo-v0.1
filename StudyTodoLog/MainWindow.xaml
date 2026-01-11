@@ -53,11 +53,11 @@
                 BorderThickness="1"
                 Background="White"
                 SnapsToDevicePixels="True">
-            <!--ダブルクリックによる編集機能-->
             <ListView x:Name="TaskListView"
                   Style="{StaticResource RoundedListViewStyle}"
                   SizeChanged="TaskListView_SizeChanged"    
                   Margin="6">
+                <!--ダブルクリック編集機能-->
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem" BasedOn="{StaticResource BigRowItemStyle}">
                         <EventSetter Event="MouseDoubleClick" Handler="TaskItem_MouseDoubleClick"/>
@@ -102,7 +102,6 @@
                                 <DataTemplate>
                                     <Border>
                                         <TextBlock Text="{Binding Title}"
-                                                    Width="{Binding ActualWidth, ElementName=ColTitle}"
                                                     FontSize="22"
                                                     FontWeight="SemiBold"
                                                     TextTrimming="CharacterEllipsis"

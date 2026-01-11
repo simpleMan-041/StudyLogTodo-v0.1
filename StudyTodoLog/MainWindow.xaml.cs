@@ -27,6 +27,9 @@ namespace StudyTodoLog
         private const double WidthMinMemo = 320;
         // !Warning! これ以降Widthはwと省略する
 
+        private DateTime _lastDeleteClickTime = DateTime.MinValue;
+        private static readonly TimeSpan DeleteDoubleClickWindow = TimeSpan.FromSeconds(1.5);
+
         public MainWindow()
         {
             InitializeComponent();
@@ -102,20 +105,61 @@ namespace StudyTodoLog
 
         private void DeleteCompletedButton_Click(Object sender, RoutedEventArgs e)
         {
+            // 2回連続で押されたか判定
+            var now = DateTime.Now;
+            bool isSecondPress = (now - _lastDeleteClickTime) <= DeleteDoubleClickWindow;
+            _lastDeleteClickTime = now;
+            
+            // 1回押されたときの削除処理
+            if (!isSecondPress)
+            {
+                try
+                {
+                    int deletedCount = TaskModel.DeleteCompleted(_connectionString);
+                    LoadTasks();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                            "完了タスクの削除に失敗しました\n\n" + ex.Message,
+                            "Delete Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                }
+                return;
+            }
+            // 2回押された時、確認後全削除
+           var result = MessageBox.Show(
+                "全てのタスクを削除します\nこの操作は取り消せません。\n\nよろしいですか？",
+                "全タスク削除の確認",
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.OK)
+            {
+                _lastDeleteClickTime = DateTime.MinValue;
+                return;
+            }
+
             try
             {
-                int deletedCount = TaskModel.DeleteCompleted(_connectionString);
+                TaskModel.DeleteAllTasks(_connectionString);
                 LoadTasks();
             }
+
             catch (Exception ex)
             {
                 MessageBox.Show(
-                        "完了タスクの削除に失敗しました\n\n" + ex.Message,
-                        "Delete Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    "全タスクの削除に失敗しました\n\n" + ex.Message,
+                    "Delete Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
-        }
+            finally
+            {
+                _lastDeleteClickTime = DateTime.MinValue;
+            }
+        } 
 
         private void TaskItem_MouseDoubleClick(object sender, MouseEventArgs e)
         {
